@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "login": "polyanka",
+    "password": "123456",
+    "avatar": "https://picsum.photos/id/1/400/400?grayscale",
+    "about": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Facilisis volutpat est velit egestas dui id."
+  }
+]
