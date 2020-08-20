@@ -35,12 +35,58 @@ app.post('/signIn', (req, res) => {
 
   if (user) {
     return res.status(200).json({
+      success: true,
       login,
       token: jwt.sign({ id: user.id }, TOKEN),
     });
   }
 
-  return res.status(404).json({ message: 'User not found' });
+  return res.status(404).json({ success: false, message: 'User not found' });
+});
+
+app.post('/signUp', (req, res) => {
+  const { login, password } = req.body;
+  const isRegistered = users.some((user) => user.login == login);
+
+  if (isRegistered) {
+    res.status(400).json({
+      success: false,
+      message: 'Login is not available!',
+    });
+
+    return;
+  }
+
+  if (login.length < 3) {
+    res.status(400).json({
+      success: false,
+      message: 'Login is too short (minimum is 3 characters)',
+    });
+
+    return;
+  }
+
+  if (password.length < 8) {
+    res.status(400).json({
+      success: false,
+      message: 'Password is too short (minimum is 8 characters)',
+    });
+
+    return;
+  }
+
+  const id = users.length + 1;
+  users.push({
+    id,
+    login,
+    password,
+    avatar: `https://picsum.photos/id/${id}/400/400?grayscale`,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: 'User registered successfully!',
+  });
 });
 
 app.listen(PORT, HOST, () =>
