@@ -26,6 +26,25 @@ app.use((_req, res, next) => {
   next();
 });
 
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[0];
+  if (!token) {
+    return res.status(400).send('Invalid token');
+  }
+
+  jwt.verify(authHeader, TOKEN, (err, user) => {
+    if (err) {
+      return res.status(400).send({
+        success: false,
+        message: 'Invalid token',
+      });
+    }
+    req.user = user;
+    next();
+  });
+}
+
 app.post('/signIn', (req, res) => {
   const { login, password } = req.body;
 
@@ -35,13 +54,17 @@ app.post('/signIn', (req, res) => {
 
   if (user) {
     return res.status(200).json({
-      success: true,
       login,
+      success: true,
+      message: 'Login successful!',
       token: jwt.sign({ id: user.id }, TOKEN),
     });
   }
 
-  return res.status(404).json({ success: false, message: 'User not found' });
+  return res.status(404).json({
+    success: false,
+    message: 'User not found',
+  });
 });
 
 app.post('/signUp', (req, res) => {
@@ -86,6 +109,49 @@ app.post('/signUp', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'User registered successfully!',
+  });
+});
+
+app.get('/profile', authenticateToken, (req, res) => {
+  const { id } = req.user;
+  const user = users.find((user) => user.id == id);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found',
+    });
+  }
+
+  const { password, ...userData } = user;
+
+  return res.status(200).json({
+    user: userData,
+  });
+});
+
+app.put('/profile', authenticateToken, (req, res) => {
+  const { id } = req.user;
+  const { about } = req.body;
+
+  const index = users.findIndex((user) => user.id === id);
+
+  if (index < 0) {
+    res.status(400).json({
+      success: false,
+      message: 'User not found',
+    });
+
+    return;
+  }
+
+  users[index] = { ...users[0], about };
+  const { password, ...userData } = users[index];
+
+  res.status(200).json({
+    user: userData,
+    success: true,
+    message: 'Profile updated successfully!',
   });
 });
 
