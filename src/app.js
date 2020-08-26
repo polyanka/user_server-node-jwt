@@ -132,7 +132,7 @@ app.get('/profile', authenticateToken, (req, res) => {
 
 app.put('/profile', authenticateToken, (req, res) => {
   const { id } = req.user;
-  const { about } = req.body;
+  const { about, name, location } = req.body;
 
   const index = users.findIndex((user) => user.id === id);
 
@@ -145,7 +145,7 @@ app.put('/profile', authenticateToken, (req, res) => {
     return;
   }
 
-  users[index] = { ...users[0], about };
+  users[index] = { ...users[0], about, name, location };
   const { password, ...userData } = users[index];
 
   res.status(200).json({
