@@ -1,12 +1,12 @@
 {
   "name": "users_server-node-jwt",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server-side authentication using JSON Web Tokens",
   "main": "app.js",
   "scripts": {
     "start": "nodemon src/app.js"
   },
-  "author": "",
+  "author": "polyanka",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",

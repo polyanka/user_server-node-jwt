@@ -40,6 +40,7 @@ function authenticateToken(req, res, next) {
         message: 'Invalid token',
       });
     }
+
     req.user = user;
     next();
   });
